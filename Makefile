@@ -64,7 +64,7 @@ GENERIC_TRGT_PLATFORM ?=zynq
 
 
 
-SUPPORTED_ZYNQ=( pynqz2 ultra96_v2 zcu104 )
+SUPPORTED_ZYNQ=( pynqz1 pynqz2 ultra96_v2 zcu104 )
 SUPPORTED_ALVEO=( alveo_u200 )
 
 
