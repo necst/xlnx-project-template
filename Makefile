@@ -48,9 +48,11 @@ ARRSZ=1000
 PORT_NR = 3
 CORE_NR = 1
 
+FILE_NAME_UTILITY=ddrbenchmark
+#naming convention to use, please be careful also in the host code naming
 
-CONFIG_FILE_NAME=ddrbenchmark.hpp
-TOP_FILE_NAME=ddrbenchmark.cpp
+CONFIG_FILE_NAME=$(FILE_NAME_UTILITY).hpp
+TOP_FILE_NAME=$(FILE_NAME_UTILITY).cpp
 GEN_CONFIG_DESIGN_OPTS= -ib ${IBW} -id ${ARRSZ} -cfg ${CONFIG_FILE_NAME}
 
 CURR_CONFIG ?= ${MAIN_PRJ}-${CORE_NR}-${IBW}-${ARRSZ}
@@ -61,16 +63,25 @@ CURR_CONFIG ?= ${MAIN_PRJ}-${CORE_NR}-${IBW}-${ARRSZ}
 
 TRGT_PLATFORM ?=ultra96_v2
 GENERIC_TRGT_PLATFORM ?=zynq
-
+ZYNQ_TYPE?=
 
 
 SUPPORTED_ZYNQ=( pynqz1 pynqz2 ultra96_v2 zcu104 )
+
+SUPPORTED_MPSOC=( ultra96_v2 zcu104  )
+SUPPORTED_SOC=( pynqz1 pynqz2 )
+
 SUPPORTED_ALVEO=( alveo_u200 )
 
 
 ifneq ($(filter $(TRGT_PLATFORM),$(SUPPORTED_ZYNQ)),)
     $(info $(TRGT_PLATFORM) exists in $(SUPPORTED_ZYNQ))
     GENERIC_TRGT_PLATFORM=zynq
+    ifneq ($(filter $(TRGT_PLATFORM),$(SUPPORTED_SOC)),)
+    	ZYNQ_TYPE = zynq_soc
+    else ifneq ($(filter $(TRGT_PLATFORM),$(SUPPORTED_MPSOC)),)
+		ZYNQ_TYPE = zynq_mpsoc
+    endif
 else ifneq ($(filter $(TRGT_PLATFORM),$(SUPPORTED_ALVEO)),)
     $(info $(TRGT_PLATFORM) exists in $(SUPPORTED_ALVEO))
     GENERIC_TRGT_PLATFORM=alveo
@@ -130,7 +141,7 @@ hls_tb_code += $(wildcard $(HLS_DIR)/*_testbench.cpp)
 
 
 HLS_CLK=10
-HLS_TB_NAME=ddrbenchmark_testbench
+HLS_TB_NAME=$(FILE_NAME_UTILITY)_testbench
 HLS_TB ?=$(HLS_TB_DIR)/$(HLS_TB_NAME).cpp
 ################
 hls_curr_tb = $(HLS_TB)
@@ -152,7 +163,7 @@ HLS_GEN_CODE_RUN_WITH_TB +=  $(shell echo $(HLS_CONFIG_DIR)/*.h )
 HLS_GEN_CODE_RUN := $(filter-out $(hls_tb_code_gen), $(HLS_GEN_CODE_RUN_WITH_TB))
 #######################################################
 
-PRJ_NAME?=ddrbenchmark-hls
+PRJ_NAME?=$(FILE_NAME_UTILITY)-hls
 
 TOP_LVL_FN=drambenchmark_top
 
@@ -173,8 +184,16 @@ BRD_DIR?=/home/xilinx/xlnx-prj-template/
 BRD_USR?=xilinx
 #######################################################
 DPLY_PY ?= $(BUILD_DIR)/sw-py
-PY_DIR := $(SRC_DIR)/python
-PY_TEST ?= iron-single-mi.py
+PY_DIR := $(SW_DIR)/python
+
+
+CPP_HOST_SRCS = $(wildcard $(HOSTCPP_DIR)/$(GENERIC_TRGT_PLATFORM)/*.cpp)
+CPP_HOST_SRCS += $(wildcard $(HOSTCPP_DIR)/$(GENERIC_TRGT_PLATFORM)/*.hpp)
+CPP_HOST_SRCS += $(wildcard $(HOSTCPP_DIR)/$(GENERIC_TRGT_PLATFORM)/*.h)
+
+PYTHON_HOST_SRCS = $(PY_DIR)/$(FILE_NAME_UTILITY)_host.py
+PYTHON_HOST_SRCS += $(PY_DIR)/$(FILE_NAME_UTILITY)_handler.py
+
 ######################################################
 .PHONY:help test_recipes test_recipes print_config gen_hls_config gen_hls_config_vts
 
@@ -199,6 +218,9 @@ help:
 	@echo "*****************************************************************"
 	@echo ""
 	@echo " [INFO] 'make deploy' copy the deployable to the target dir"
+	@echo " [INFO] 'make deploycpp' same as before but with cpp host"
+	@echo " [INFO] 'make deploypy' same as  before but with python host"
+	@echo " [INFO] 'make deployall' fusion of two previous command"
 	@echo " default configuration: micro-usb addr 'BRD_URI?=192.168.3.1'"
 	@echo " default target directory on the board 'BRD_DIR?=/home/xilinx/iron/'"
 	@echo ""
@@ -266,10 +288,14 @@ resyn_extr_vts_%:
 	$(SCRIPT_DIR)/extract_all_synt_res.sh $* true true ${FREQ_MHZ}
 
 
-deploy: deploypy
-	rsync -avz $(DEPLOY_DIR) $(BRD_USR)@$(BRD_IP):$(BRD_DIR)
 
-deploypy: sw
+deploy: prepdeploy
+	rsync -avz $(DEPLOY_DIR) $(BRD_USR)@$(BRD_IP):$(BRD_DIR)
+deployall:deploycpp deploypy
+
+deploycpp: prepdeploy sw_cpp
+	rsync -avz $(DEPLOY_DIR) $(BRD_USR)@$(BRD_IP):$(BRD_DIR)
+deploypy:prepdeploy sw_py
 	rsync -avz $(DPLY_PY) $(BRD_USR)@$(BRD_IP):$(BRD_DIR)
 #######################################################
 #######################################################

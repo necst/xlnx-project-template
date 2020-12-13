@@ -57,7 +57,7 @@ WARNING NOT YET TESTED THIS FLOW
 
 1. Complete at least one design in the previous section
 2. `make sw`create a deploy folder for the python code
-3. `make deploy BRD_IP=<target_ip> BRD_USR=<user_name_on_remote_host> BRD_DIR=<path_to_copy>` copy onto the deploy folders the needed files
+3. `make deployall BRD_IP=<target_ip> BRD_USR=<user_name_on_remote_host> BRD_DIR=<path_to_copy>` copy onto the deploy folders the needed files
 4. connect to the remote device, i.e., via ssh `ssh <user_name_on_remote_host>@<target_ip>`
 5. [Optional] install all needed python packages
 6. set `BITSTREAM=<path_to_bits>`, `CLK=200`, `CORE_NR=<target_core_numbers>`, `PLATFORM=Alveo|Zynq`, `RES_PATH=path_results`
@@ -68,7 +68,7 @@ WARNING NOT YET TESTED THIS FLOW
 Follows some makefile parameters
 
 #### General makefile parameters, and design configuration parameter
-* TRGT_PLATFORM=`pynqz2|ultra96_v2|zcu10|alveo_u200`
+* TRGT_PLATFORM=`pynqz1|pynqz2|ultra96_v2|zcu10|alveo_u200`
 * AXI input packet bits IBW=`8|16|32|64|128|256|512`
 * Number of AXI packet to transfer ARRSZ=`Any number| default 1000`
 * Core Number CORE_NR=`1|2|3|4`

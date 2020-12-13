@@ -75,20 +75,27 @@ launch_vivado_gui: $(PRJDIR)/$(VIVADO_PRJNAME).xpr
 ########################
 #TODO
 ########################
+driver:
+	cp $(wildcard $(DRVR_DIR)/*pp) $(DEPLOY_DIR)/
 
-#python
-sw:
+sw_py:
 	rm -rf $(DPLY_PY)
 	mkdir -p $(DPLY_PY)
-	cp $(PY_DIR)/$(PY_MI) $(DPLY_PY)/ 
-	cp $(PY_DIR)/$(PY_PWL) $(DPLY_PY)/
-	cp $(PY_DIR)/$(PY_ONPL) $(DPLY_PY)/
-	cp $(SCRIPT_DIR)/python_tester_* $(DPLY_PY)/
-########################
-########################
+	cp $(PYTHON_HOST_SRCS) $(DPLY_PY)/
 
-prepdeploy:
-	@echo "[INFO] placeholder REMEMBER!!!!"
+sw_cpp: 
+	mkdir -p $(DEPLOY_DIR)
+	cp $(CPP_HOST_SRCS) $(DEPLOY_DIR)/
+
+
+sw: sw_py sw_cpp
+
+	
+prepdeploy: hw_pre driver
+	mkdir -p $(DEPLOY_DIR)
+	cp $(SCRIPT_DIR)/$(ZYNQ_TYPE).mk $(DEPLOY_DIR)/Makefile
+
+
 ########################
 helplat: 
 	@echo ""

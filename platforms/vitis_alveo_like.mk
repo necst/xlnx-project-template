@@ -262,20 +262,23 @@ test_config_%:
 
 
 #pythonKRNL_LDCLFLAGS_MULTI_CORE
-sw:
+sw_py:
 	rm -rf $(DPLY_PY)
 	mkdir -p $(DPLY_PY)
-	cp $(PY_DIR)/$(PY_MI) $(DPLY_PY)/ 
-	cp $(PY_DIR)/$(PY_PWL) $(DPLY_PY)/
-	cp $(PY_DIR)/$(PY_ONPL) $(DPLY_PY)/
-	cp $(SCRIPT_DIR)/python_tester_* $(DPLY_PY)/
+	cp $(PYTHON_HOST_SRCS) $(DPLY_PY)/
+
+sw_cpp:
+	mkdir -p $(DEPLOY_DIR)
+	cp $(CPP_HOST_SRCS) $(DEPLOY_DIR)/
+	cp -R $(HOSTCPP_DIR)/alveo/xcl2 $(DEPLOY_DIR)/
 
 
+sw: sw_py sw_cpp
 
-
-
-
-
+	
+prepdeploy: 
+	mkdir -p $(DEPLOY_DIR)
+	cp $(VTS_DST_DIR)/$(KERNEL_EXE).xclbin $(DEPLOY_DIR)
 
 curr_status:
 	@echo ""
@@ -297,9 +300,7 @@ curr_status:
 	@echo "               END of Alveo make status                     "
 	@echo "*****************************************************************"
 	@echo ""
-	
-prepdeploy:
-	@echo "[INFO] placeholder REMEMBER!!!!"
+
 ########################
 helplat: curr_status 
 	@echo ""

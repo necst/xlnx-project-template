@@ -131,10 +131,9 @@ void execTest(int * ref, int * out){
    //
    double nseconds_hw = std::chrono::duration_cast<std::chrono::nanoseconds>(end_hw - start_hw).count(); 
    logging(nseconds_hw, "hw", result);
-   printf("%d\n", result);
    std::cout << "result hw " << result << std::endl;
 
-   std::cout << "time hw " << nseconds_hw << "[ns] time sw " <<std::endl;
+   std::cout << "time hw " << nseconds_hw << "[ns] time sw :?" <<std::endl;
 }
 
 void execTestMultiple(int * ref, int * out){
