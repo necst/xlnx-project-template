@@ -117,7 +117,7 @@ HOSTCPP_DIR=$(SW_DIR)/hostcpp
 
 #HLS stuffs
 
-HLS_INCL ?= /xilinx/software/Vivado/2019.2/include
+HLS_INCL ?= /xilinx/software/Vitis_HLS/2020.2/include
 
 VIVADO_VERSION = $(shell vivado -version | grep Vivado)
 VIVADO_SCRIPT_DIR ?= $(SCRIPT_DIR)/$(TRGT_PLATFORM)/

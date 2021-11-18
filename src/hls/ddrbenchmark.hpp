@@ -36,7 +36,6 @@ const unsigned int data_array_size_depth = DATA_ARRAY_SIZE;
 
 #ifndef USING_XILINX_VITIS
 	extern void  drambenchmark_top(ap_uint<INPUT_BIWIDTH> * in1, ap_uint<INPUT_BIWIDTH> * out);
-#endif //KERNEL_NAME
 #else
 	extern "C" void drambenchmark_top(ap_uint<INPUT_BIWIDTH> * in1, ap_uint<INPUT_BIWIDTH> * out);
 #endif //USING_XILINX_VITIS

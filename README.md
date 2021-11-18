@@ -24,7 +24,7 @@ The flow in three simple way
   * `driver/` cpp source code driver for Zynq with Pynq framework (borrowed from [Xilinx BNN-PYNQ repository](https://github.com/Xilinx/BNN-PYNQ), pleaser refer to that repo for the license and the property of Xilinx company).
   * `hls/` HLS source code for both design and testbench in subfolder `hls/testbench/`.
   * `misc/` this folder contains only the board definition files (BDF), that are properties of the board producer, we report here just for the sake of the user.
-  * `scripts/` miscellaneous scripts for the design generation, from tcl for Vivado and Vivado HLS to design configurator and design results extractions
+  * `scripts/` miscellaneous scripts for the design generation, from tcl for Vivado and Vitis HLS to design configurator and design results extractions
   * `sw/` software code bases, for host mainly
     * `hostcpp/` cpp host code for Zynq with Pynq and for PCIe card, such as Alveo
     * `python/` python host source code for Pynq based platforms
